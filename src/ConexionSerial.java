@@ -1,24 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package monopolio;
 import com.fazecast.jSerialComm.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static monopolio.ConexionSerial.pasarByteAString;
 
 /**
  *
  * @author Chu
  */
 public class ConexionSerial {
-    SerialPort puertoEntrada;
-    SerialPort puertoSalida;
+    private SerialPort puertoEntrada;
+    private SerialPort puertoSalida;
     
     public void ConexionSerial(){
         
@@ -79,12 +72,12 @@ public class ConexionSerial {
         // Algo llego asi que lo almaceno en el buffer
         readBuffer = new byte[4];
         int numRead = puertoEntrada.readBytes(readBuffer, 4);
-            
+
         //Comprobacion de que se envio
         System.out.print("Se encontro el mensaje:\n");
         for(int i=0; i<numRead;i++) System.out.println(" "+
                 pasarByteAString(readBuffer[i]));
-        this.puertoSalida.closePort();
+        this.puertoEntrada.closePort();
         return readBuffer;
     }
     

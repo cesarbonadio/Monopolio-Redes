@@ -1,0 +1,15 @@
+-Chance/Com chest
+-Rent control
+-Utilities
+-Railroads
+-Triples
+-Dealing with jail
+-Add notion of current command.
+
+//for railroads, you can just change the boardspace class for the rent once 1 person owns a few of them. you can do checks.
+
+
+Further:
+-how to increase num of players
+
+Battleship as well.
