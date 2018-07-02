@@ -41,7 +41,7 @@ public class MonopolyBoard extends JFrame{
 	private ArrayList<JLabel> blueLabels;
 	
 	
-	public MonopolyBoard(String p1Name, String p2Name){
+	public MonopolyBoard(String p1Name, String p2Name, String p3Name, String p4Name){
 		
 		this.p1Name = p1Name;
 		this.p2Name = p2Name;
@@ -61,7 +61,7 @@ public class MonopolyBoard extends JFrame{
 		
 		//Add all of the components to the frame
 		setSize(1200, 850);
-		setTitle("Monopoly");
+		setTitle("MonopolioUCAB");
 		setLayout(new BorderLayout());
 		add(topPanel, BorderLayout.NORTH);
 		add(split, BorderLayout.CENTER);
@@ -114,7 +114,9 @@ public class MonopolyBoard extends JFrame{
                 //ActionListener for buy
             	Game.endTurn();
             }
-        }); 
+        });
+
+
 	}
 
 	/**
@@ -153,7 +155,7 @@ public class MonopolyBoard extends JFrame{
 		topPanel = new JPanel(new FlowLayout());
 		bottomPanel = new JPanel(new FlowLayout());
 		lp = getLayeredPane();
-		topInfo = new JLabel("Game Information      " + p1Name + ": 1500" + "      " + p2Name + ": 1500");
+		topInfo = new JLabel("Informacion de juego      " + p1Name + ": 1500" + "      " + p2Name + ": 1500");
 		buyButton = new JButton("Buy");
 		myPropertiesButton = new JButton("My Properties");
 		diceButton = new JButton("Throw Dice");

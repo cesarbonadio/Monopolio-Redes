@@ -13,7 +13,7 @@ public class ConexionSerial {
     private SerialPort puertoEntrada;
     private SerialPort puertoSalida;
     
-    public void ConexionSerial(){
+    public ConexionSerial(){
         
     }
     

@@ -16,10 +16,12 @@ public class Game {
 	private static Player player2;
 	private static Player currentPlayer;
 	private static Player otherPlayer;
-	private static int thisOne;
+	private static int thisOne;  //Identifica que jugador corresponde a esta maquina o instancia del programa
 	private static ConexionSerial conexion;
 	private static boolean alreadyRolled = false;
 	private static boolean paidRent = false;
+	private static String origen;
+	private static String destino;
 
 	public Game(MonopolyBoard board, Player p1, Player p2, int currentOne, ConexionSerial connect) {
 		Game.board = board;
@@ -31,12 +33,31 @@ public class Game {
 		player2.setPlayerNum(2);
  		currentPlayer = p1;
  		otherPlayer = p2;
+ 		if (currentOne == 1){
+ 			origen = "00";
+ 			destino = "01";
+		}
+		if (currentOne == 2){
+ 			origen = "01";
+ 			destino = "10";
+		}
+		if (currentOne == 3){
+ 			origen = "10";
+ 			destino = "11";
+		}
+		if (currentOne == 4){
+ 			origen = "11";
+ 			destino = "00";
+		}
 		p1.setTurn(true);
 		board.changeTextArea(player1.getName() + " is the red one.\n" + player2.getName() + " is the blue one.\n\n");
 		board.changeTextArea(player1.getName() + "'s properties will have red blocks\nand " 
 					+ player2.getName() + "'s properties will have blue blocks on them\n\n");
 		board.changeTextArea(player1.getName() + " has $" + player1.getCash() + "\n" + player2.getName()
 					+ " has $" + player2.getCash() + "\n\n");
+		board.changeTextArea("You are player number " + thisOne +"\n");
+		board.changeTextArea("The turn belongs to player number " + currentPlayer.getPlayerNum() +"\n");
+		if (currentOne != 1) ListenForAction();
 	}
 
 	public static void roll() {
@@ -51,6 +72,7 @@ public class Game {
 		if(alreadyRolled) {
 			board.changeTextArea(currentPlayer.getName() + " has $" + currentPlayer.getCash() + "\n");
 			board.changeTextArea(currentPlayer.getName() + "'s turn ended.\n\n");
+			if (thisOne == currentPlayer.getPlayerNum()) conexion.EnviarMensaje(origen + destino + "0001", "00000000");
 			if(player1.isTurn()) {
 				player1.setTurn(false);
 				player2.setTurn(true);
@@ -66,12 +88,15 @@ public class Game {
 			board.changeDice(0, 0);
 			alreadyRolled = false;
 			paidRent = false;
+
 		}
 		//Otherwise, tell them to roll.
 		else {
 			board.changeTextArea(currentPlayer.getName() + " please roll first\n");
 		}
 		board.updateInformation(player1.getCash(), player2.getCash());
+		if (currentPlayer.getPlayerNum()!=thisOne) ListenForAction();
+		else board.changeTextArea("The turn now belongs to you\n");
 	}
 	
 	public static void buy() {
@@ -91,6 +116,37 @@ public class Game {
 								+ BoardSpace.getName(currentSpace) + " for $" + cost + "\n");
 						board.placeOwnerToken(currentSpace, currentPlayer.getPlayerNum());
 						board.updateInformation(player1.getCash(), player2.getCash());
+						if (thisOne == currentPlayer.getPlayerNum()){
+							if (currentSpace == 1) conexion.EnviarMensaje(origen + origen + "0100", "10000000");
+							if (currentSpace == 3) conexion.EnviarMensaje(origen + origen + "0100", "10000001");
+							if (currentSpace == 6) conexion.EnviarMensaje(origen + origen + "0100", "10000010");
+							if (currentSpace == 8) conexion.EnviarMensaje(origen + origen + "0100", "10000011");
+							if (currentSpace == 9) conexion.EnviarMensaje(origen + origen + "0100", "10000100");
+							if (currentSpace == 11) conexion.EnviarMensaje(origen + origen + "0100", "10000101");
+							if (currentSpace == 13) conexion.EnviarMensaje(origen + origen + "0100", "10000110");
+							if (currentSpace == 14) conexion.EnviarMensaje(origen + origen + "0100", "10000111");
+							if (currentSpace == 16) conexion.EnviarMensaje(origen + origen + "0100", "10001000");
+							if (currentSpace == 18) conexion.EnviarMensaje(origen + origen + "0100", "10001001");
+							if (currentSpace == 19) conexion.EnviarMensaje(origen + origen + "0100", "10001010");
+							if (currentSpace == 21) conexion.EnviarMensaje(origen + origen + "0100", "10001011");
+							if (currentSpace == 23) conexion.EnviarMensaje(origen + origen + "0100", "10001100");
+							if (currentSpace == 24) conexion.EnviarMensaje(origen + origen + "0100", "10001101");
+							if (currentSpace == 26) conexion.EnviarMensaje(origen + origen + "0100", "10001110");
+							if (currentSpace == 27) conexion.EnviarMensaje(origen + origen + "0100", "10001111");
+							if (currentSpace == 29) conexion.EnviarMensaje(origen + origen + "0100", "10010000");
+							if (currentSpace == 31) conexion.EnviarMensaje(origen + origen + "0100", "10010001");
+							if (currentSpace == 32) conexion.EnviarMensaje(origen + origen + "0100", "10010010");
+							if (currentSpace == 34) conexion.EnviarMensaje(origen + origen + "0100", "10010011");
+							if (currentSpace == 37) conexion.EnviarMensaje(origen + origen + "0100", "10010100");
+							if (currentSpace == 39) conexion.EnviarMensaje(origen + origen + "0100", "10010101");
+							if (currentSpace == 12) conexion.EnviarMensaje(origen + origen + "0100", "10010110");
+							if (currentSpace == 28) conexion.EnviarMensaje(origen + origen + "0100", "10010111");
+							if (currentSpace == 5) conexion.EnviarMensaje(origen + origen + "0100", "10011000");
+							if (currentSpace == 15) conexion.EnviarMensaje(origen + origen + "0100", "10011001");
+							if (currentSpace == 25) conexion.EnviarMensaje(origen + origen + "0100", "10011010");
+							if (currentSpace == 35) conexion.EnviarMensaje(origen + origen + "0100", "10011011");
+						}
+
 					}
 					//Otherwise tell them they don't.
 					else
@@ -101,7 +157,7 @@ public class Game {
 					if(BoardSpace.getSpaceAttribute(currentSpace, 0) == currentPlayer.getPlayerNum())
 						board.changeTextArea("Property already owned by you\n");
 					else
-						board.changeTextArea("Property already owned by " + otherPlayer.getName() + "\n");
+						board.changeTextArea("Property already owned by someone else\n");
 				}
 			}
 			//Otherwise tell the player that the property is now ownable.
@@ -118,7 +174,7 @@ public class Game {
 	public static void dice(){
 		//If the player hasn't already rolled
 		if(!alreadyRolled) {
-			roll();
+			if (currentPlayer.getPlayerNum() == thisOne) roll();
 			board.changeTextArea(currentPlayer.getName() + " rolled a " + (dice1+dice2) + "\n");
 			int temp = dice1+dice2 + currentPlayer.getSpaceNum();
 			//If the dice total + player space exceeds 39, which
@@ -134,6 +190,24 @@ public class Game {
 			//Move the player token to the new place.
 			board.moveToken(currentPlayer.getSpaceNum(), currentPlayer.getPlayerNum());
 			alreadyRolled=true;
+			if (currentPlayer.getPlayerNum() == thisOne){
+				String dado1 = "0000";
+				String dado2 = "0000";
+				if ((dice1) == 1) dado1="001";
+				if ((dice1) == 2) dado1="010";
+				if ((dice1) == 3) dado1="011";
+				if ((dice1) == 4) dado1="100";
+				if ((dice1) == 5) dado1="101";
+				if ((dice1) == 6) dado1="110";
+				if ((dice2) == 1) dado2="001";
+				if ((dice2) == 2) dado2="010";
+				if ((dice2) == 3) dado2="011";
+				if ((dice2) == 4) dado2="100";
+				if ((dice2) == 5) dado2="101";
+				if ((dice2) == 6) dado2="110";
+				conexion.EnviarMensaje(origen + origen + "0001", "10" + dado1 + dado2 );
+			}
+
 		}
 		//Otherwise tell them they have already rolled.
 		else 
@@ -201,5 +275,104 @@ public class Game {
 		}
 		else
 			board.changeTextArea("You don't own any properties\n");
+	}
+
+	/*public static void ListenForAction(){
+		byte[] recibo = new byte[4];
+		String primerOcteto;
+		String segundoOcteto;
+		board.changeTextArea("The turn does not currently belong to you\n");
+		while(thisOne!=currentPlayer.getPlayerNum()){
+			recibo = conexion.RecibirMensaje();
+			primerOcteto = ConexionSerial.pasarByteAString(recibo[1]);
+			segundoOcteto = ConexionSerial.pasarByteAString(recibo[2]);
+			//Si lanzo un dado
+			if (!primerOcteto.substring(0,2).equals(origen)){
+				if (primerOcteto.substring(4,8).equals("0001")){
+					//Si esta lanzando los dados por primera vez
+					if (primerOcteto.substring(0,2).equals(primerOcteto.substring(2,4))){
+						if (segundoOcteto.substring(2,5).equals("001")) dice1 = 1;
+						if (segundoOcteto.substring(2,5).equals("010")) dice1 = 2;
+						if (segundoOcteto.substring(2,5).equals("011")) dice1 = 3;
+						if (segundoOcteto.substring(2,5).equals("100")) dice1 = 4;
+						if (segundoOcteto.substring(2,5).equals("101")) dice1 = 5;
+						if (segundoOcteto.substring(2,5).equals("110")) dice1 = 6;
+						if (segundoOcteto.substring(5,8).equals("001")) dice2 = 1;
+						if (segundoOcteto.substring(5,8).equals("010")) dice2 = 2;
+						if (segundoOcteto.substring(5,8).equals("011")) dice2 = 3;
+						if (segundoOcteto.substring(5,8).equals("100")) dice2 = 4;
+						if (segundoOcteto.substring(5,8).equals("101")) dice2 = 5;
+						if (segundoOcteto.substring(5,8).equals("110")) dice2 = 6;
+						board.changeDice(dice1, dice2);
+						dice();
+					}
+					else{
+						endTurn();
+					}
+				}
+				else{
+					if (primerOcteto.substring(4,8).equals("0100")){
+						buy();
+					}
+
+				}
+				conexion.EnviarMensaje(primerOcteto, segundoOcteto);
+			}
+
+
+		}
+
+	}*/
+
+	public static void ListenForAction(){
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				byte[] recibo = new byte[4];
+				String primerOcteto;
+				String segundoOcteto;
+				board.changeTextArea("The turn does not currently belong to you\n");
+				while(thisOne!=currentPlayer.getPlayerNum()){
+					recibo = conexion.RecibirMensaje();
+					primerOcteto = ConexionSerial.pasarByteAString(recibo[1]);
+					segundoOcteto = ConexionSerial.pasarByteAString(recibo[2]);
+					//Si lanzo un dado
+					if (!primerOcteto.substring(0,2).equals(origen)){
+						if (primerOcteto.substring(4,8).equals("0001")){
+							//Si esta lanzando los dados por primera vez
+							if (primerOcteto.substring(0,2).equals(primerOcteto.substring(2,4))){
+								if (segundoOcteto.substring(2,5).equals("001")) dice1 = 1;
+								if (segundoOcteto.substring(2,5).equals("010")) dice1 = 2;
+								if (segundoOcteto.substring(2,5).equals("011")) dice1 = 3;
+								if (segundoOcteto.substring(2,5).equals("100")) dice1 = 4;
+								if (segundoOcteto.substring(2,5).equals("101")) dice1 = 5;
+								if (segundoOcteto.substring(2,5).equals("110")) dice1 = 6;
+								if (segundoOcteto.substring(5,8).equals("001")) dice2 = 1;
+								if (segundoOcteto.substring(5,8).equals("010")) dice2 = 2;
+								if (segundoOcteto.substring(5,8).equals("011")) dice2 = 3;
+								if (segundoOcteto.substring(5,8).equals("100")) dice2 = 4;
+								if (segundoOcteto.substring(5,8).equals("101")) dice2 = 5;
+								if (segundoOcteto.substring(5,8).equals("110")) dice2 = 6;
+								board.changeDice(dice1, dice2);
+								dice();
+							}
+							else{
+								endTurn();
+							}
+						}
+						else{
+							if (primerOcteto.substring(4,8).equals("0100")){
+								buy();
+							}
+
+						}
+						conexion.EnviarMensaje(primerOcteto, segundoOcteto);
+					}
+
+
+				}
+			}
+		});
+		t.start();
 	}
 }
