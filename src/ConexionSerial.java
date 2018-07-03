@@ -51,12 +51,12 @@ public class ConexionSerial {
         envio[1] = (byte)Short.parseShort(primero, 2);
         envio[2] = (byte)Short.parseShort(segundo, 2);
         envio[3] = (byte)Short.parseShort(flag, 2);
-        System.out.print("Mensaje enviado: "
+        /*System.out.print("Mensaje enviado: "
                 +" "+pasarByteAString(envio[0])
                 +" "+pasarByteAString(envio[1])
                 +" "+pasarByteAString(envio[2])
                 +" "+pasarByteAString(envio[3])
-                +"\n");
+                +"\n");*/
         puertoSalida.writeBytes(envio, envio.length);
         this.puertoSalida.closePort();
     }
@@ -74,9 +74,9 @@ public class ConexionSerial {
         int numRead = puertoEntrada.readBytes(readBuffer, 4);
 
         //Comprobacion de que se envio
-        System.out.print("Se encontro el mensaje:\n");
+        /*System.out.print("Se encontro el mensaje:\n");
         for(int i=0; i<numRead;i++) System.out.println(" "+
-                pasarByteAString(readBuffer[i]));
+                pasarByteAString(readBuffer[i]));*/
         this.puertoEntrada.closePort();
         return readBuffer;
     }

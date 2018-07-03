@@ -24,22 +24,30 @@ public class Tester {
 			JOptionPane.showMessageDialog(null, i + " "+ puerto);
 			i++;
 		}
-        int entrada = Integer.parseInt(JOptionPane.showInputDialog("Select input port"));
+        int entrada = Integer.parseInt(JOptionPane.showInputDialog("Seleccione un puerto de entrada"));
 		//Scanner scanner = new Scanner(System.in);
 		//int entrada = Integer.parseInt(scanner.nextLine());
 		System.out.println("Seleccione Puerto de  Salida");
 		//Scanner scanner2 = new Scanner(System.in);
 		//int salida = Integer.parseInt(scanner2.nextLine());
-        int salida = Integer.parseInt(JOptionPane.showInputDialog("Select output port"));
+        int salida = Integer.parseInt(JOptionPane.showInputDialog("Seleccione un puerto de salida"));
 		ConexionSerial conexion = new ConexionSerial();
 		conexion.setPuertos(entrada, salida);
-		String player = JOptionPane.showInputDialog("Are you player one? Yes or no");
-		if (player.equals("yes")){
+		String player = JOptionPane.showInputDialog("Es el jugador uno? Si o No?");
+		if (player.equals("Si")){
 			conexion.EnviarMensaje("00000000", "10000000");
 			recibo = conexion.RecibirMensaje();
-			System.out.print("Se encontro el mensaje:\n");
+			/*System.out.print("Se encontro el mensaje:\n");
 			System.out.print(ConexionSerial.pasarByteAString(recibo[1])+" ");
-			System.out.print(ConexionSerial.pasarByteAString(recibo[2])+" ");
+			System.out.print(ConexionSerial.pasarByteAString(recibo[2])+" ");*/
+			try
+			{
+				Thread.sleep(3000);
+			}
+			catch(InterruptedException ex)
+			{
+				Thread.currentThread().interrupt();
+			}
 			conexion.EnviarMensaje("00000000", "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
 			current = 1;
 		}else {
@@ -58,9 +66,9 @@ public class Tester {
 			recibo = conexion.RecibirMensaje();
 			String primerOcteto = ConexionSerial.pasarByteAString(recibo[1]);
 			String segundoOcteto = ConexionSerial.pasarByteAString(recibo[2]);
-			System.out.print("Se encontro el mensaje:\n");
+			/*System.out.print("Se encontro el mensaje:\n");
 			System.out.print(primerOcteto + " ");
-			System.out.print(segundoOcteto + "\n");
+			System.out.print(segundoOcteto + "\n");*/
 
 			if (segundoOcteto.equals("10000000")) {
 				segundoOcteto = "10000001";
@@ -74,7 +82,7 @@ public class Tester {
 					current = 4;
 				}
 			}
-			System.out.print(current + " Es tu numero de jugador\n");
+			//System.out.print(current + " Es tu numero de jugador\n");
 			conexion.EnviarMensaje(primerOcteto, segundoOcteto);
 			recibo = conexion.RecibirMensaje();
 		}
@@ -83,25 +91,25 @@ public class Tester {
 
 		String p1Name = JOptionPane.showInputDialog("Ingrese el nombre del primer jugador");
 		Player p1 = new Player(STARTING_MONEY, p1Name);
-		String p2Name = JOptionPane.showInputDialog("Ingrese el nombre del tercer jugador");
+		String p2Name = JOptionPane.showInputDialog("Ingrese el nombre del segundo jugador");
 		Player p2 = new Player(STARTING_MONEY, p2Name);
 		if (ConexionSerial.pasarByteAString(recibo[2]).substring(6,8).equals("11")){
 			String p3Name = JOptionPane.showInputDialog("Ingrese el nombre del tercer jugador");
 			Player p3 = new Player(STARTING_MONEY, p3Name);
 			String p4Name = JOptionPane.showInputDialog("Ingrese el nombre del cuarto jugador");
 			Player p4 = new Player(STARTING_MONEY, p4Name);
-			MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, p4Name);
-			Game myGame = new Game(gameBoard, p1, p2, current, conexion);
+			MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, p4Name, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
+			Game myGame = new Game(gameBoard, p1, p2, p3, p4, current, conexion);
 		}
 		else if (ConexionSerial.pasarByteAString(recibo[2]).substring(6,8).equals("10")) {
 				String p3Name = JOptionPane.showInputDialog("Ingrese el nombre del tercer jugador");
 				Player p3 = new Player(STARTING_MONEY, p3Name);
-				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, null);
-			Game myGame = new Game(gameBoard, p1, p2, current, conexion);
+				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, null, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
+			Game myGame = new Game(gameBoard, p1, p2, p3, null, current, conexion);
 		}
 		else{
-				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, null, null);
-				Game myGame = new Game(gameBoard, p1, p2, current, conexion);
+				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, null, null, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
+				Game myGame = new Game(gameBoard, p1, p2, null, null, current, conexion);
 			}
 
 

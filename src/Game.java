@@ -14,6 +14,8 @@ public class Game {
 	private static MonopolyBoard board;
 	private static Player player1;
 	private static Player player2;
+	private static Player player3;
+	private static Player player4;
 	private static Player currentPlayer;
 	private static Player otherPlayer;
 	private static int thisOne;  //Identifica que jugador corresponde a esta maquina o instancia del programa
@@ -23,7 +25,7 @@ public class Game {
 	private static String origen;
 	private static String destino;
 
-	public Game(MonopolyBoard board, Player p1, Player p2, int currentOne, ConexionSerial connect) {
+	public Game(MonopolyBoard board, Player p1, Player p2, Player p3, Player p4, int currentOne, ConexionSerial connect) {
 		Game.board = board;
 		conexion = connect;
 		thisOne = currentOne;
@@ -31,6 +33,14 @@ public class Game {
 		player1.setPlayerNum(1);
 		player2 = p2;
 		player2.setPlayerNum(2);
+		if (p3 != null){
+			player3 = p3;
+			player3.setPlayerNum(3);
+		}
+		if (p4 != null){
+			player4 = p4;
+			player4.setPlayerNum(4);
+		}
  		currentPlayer = p1;
  		otherPlayer = p2;
  		if (currentOne == 1){
@@ -50,14 +60,29 @@ public class Game {
  			destino = "00";
 		}
 		p1.setTurn(true);
-		board.changeTextArea(player1.getName() + " is the red one.\n" + player2.getName() + " is the blue one.\n\n");
-		board.changeTextArea(player1.getName() + "'s properties will have red blocks\nand " 
-					+ player2.getName() + "'s properties will have blue blocks on them\n\n");
-		board.changeTextArea(player1.getName() + " has $" + player1.getCash() + "\n" + player2.getName()
-					+ " has $" + player2.getCash() + "\n\n");
-		board.changeTextArea("You are player number " + thisOne +"\n");
-		board.changeTextArea("The turn belongs to player number " + currentPlayer.getPlayerNum() +"\n");
-		if (currentOne != 1) ListenForAction();
+ 		if (player4!=null){
+			board.changeTextArea(player1.getName() + " Tendra el color rojo.\n" + player2.getName() + " Tendra el color azul.\n" + player3.getName() + " Tendra el color verde.\n" + player4.getName() + " Tendra el color amarillo.\n\n");
+			board.changeTextArea(player1.getName() + " tiene BsS." + player1.getCash() + "\n" + player2.getName()
+					+ " tiene BsS." + player2.getCash() + "\n" +
+					player3.getName() + " tiene BsS." + player3.getCash()+"\n" +
+					player4.getName() + " tiene BsS." + player4.getCash() +"\n\n");
+		}
+		else if (player3 != null){
+			board.changeTextArea(player1.getName() + " Tendra el color rojo.\n" + player2.getName() + " Tendra el color azul.\n" + player3.getName() + " Tendra el color verde.\n\n");
+			board.changeTextArea(player1.getName() + " tiene BsS." + player1.getCash() + "\n" + player2.getName()
+					+ " tiene BsS." + player2.getCash() + "\n" +
+					player3.getName() + " tiene BsS." + player3.getCash()+"\n\n");
+		}
+		else{
+			board.changeTextArea(player1.getName() + " Tendra el color rojo.\n" + player2.getName() + " Tendra el color azul.\n\n");
+			board.changeTextArea(player1.getName() + " tiene BsS." + player1.getCash() + "\n" + player2.getName()
+					+ " tiene BsS." + player2.getCash() + "\n\n");
+		}
+		board.changeTextArea("Las propiedades tendran los colores mencionados antes\n\n");
+		board.changeTextArea("Tu eres el jugador " + thisOne +"\n");
+		board.changeTextArea("El turno le pertenece a " + currentPlayer.getPlayerNum() +" primero\n");
+		//if (currentOne != 1) ListenForAction();
+		ListenForAction();
 	}
 
 	public static void roll() {
@@ -70,8 +95,8 @@ public class Game {
 	public static void endTurn() {
 		//Only let the player end their turn if they have already rolled
 		if(alreadyRolled) {
-			board.changeTextArea(currentPlayer.getName() + " has $" + currentPlayer.getCash() + "\n");
-			board.changeTextArea(currentPlayer.getName() + "'s turn ended.\n\n");
+			board.changeTextArea(currentPlayer.getName() + " tiene BsS" + currentPlayer.getCash() + "\n");
+			board.changeTextArea(currentPlayer.getName() + ", tu turno ha culminado.\n\n");
 			if (thisOne == currentPlayer.getPlayerNum()) conexion.EnviarMensaje(origen + destino + "0001", "00000000");
 			if(player1.isTurn()) {
 				player1.setTurn(false);
@@ -80,9 +105,35 @@ public class Game {
 				otherPlayer = player1;
 			}
 			else if(player2.isTurn()) {
-				player1.setTurn(true);
-				player2.setTurn(false);
-				currentPlayer = player1;
+				if (player3 != null){
+					player3.setTurn(true);
+					player2.setTurn(false);
+					currentPlayer = player3;
+				}
+				else{
+					player1.setTurn(true);
+					player2.setTurn(false);
+					currentPlayer = player1;
+				}
+				otherPlayer = player2;
+			}
+			else if(player3.isTurn()){
+				if (player4 != null){
+					player4.setTurn(true);
+					player3.setTurn(false);
+					currentPlayer = player4;
+				}
+				else{
+					player1.setTurn(true);
+					player3.setTurn(false);
+					currentPlayer = player1;
+				}
+				otherPlayer = player2;
+			}
+			else if (player4.isTurn()){
+					player1.setTurn(true);
+					player4.setTurn(false);
+					currentPlayer = player1;
 				otherPlayer = player2;
 			}
 			board.changeDice(0, 0);
@@ -92,11 +143,15 @@ public class Game {
 		}
 		//Otherwise, tell them to roll.
 		else {
-			board.changeTextArea(currentPlayer.getName() + " please roll first\n");
+			board.changeTextArea(currentPlayer.getName() + ", tire primero los dados\n");
 		}
-		board.updateInformation(player1.getCash(), player2.getCash());
-		if (currentPlayer.getPlayerNum()!=thisOne) ListenForAction();
-		else board.changeTextArea("The turn now belongs to you\n");
+		if (player4 != null) board.updateInformation(player1.getCash(), player2.getCash(), player3.getCash(), player4.getCash());
+		else if (player3 != null) board.updateInformation(player1.getCash(), player2.getCash(), player3.getCash(), 0);
+		else board.updateInformation(player1.getCash(), player2.getCash(), 0, 0);
+		//if (currentPlayer.getPlayerNum()!=thisOne) ListenForAction();
+		//else board.changeTextArea("El turno ahora te pertenece\n");
+		if (currentPlayer.getPlayerNum()!=thisOne) board.changeTextArea("El turno no te pertenece\n");
+		else board.changeTextArea("El turno ahora te pertenece\n");
 	}
 	
 	public static void buy() {
@@ -112,10 +167,12 @@ public class Game {
 					if(currentPlayer.getCash()-cost>=0) {
 						currentPlayer.changeCash(-cost);
 						BoardSpace.setSpaceAttribute(currentSpace, 0, currentPlayer.getPlayerNum());
-						board.changeTextArea(currentPlayer.getName() + " just purchased " 
-								+ BoardSpace.getName(currentSpace) + " for $" + cost + "\n");
+						board.changeTextArea(currentPlayer.getName() + " Acaba de comprar "
+								+ BoardSpace.getName(currentSpace) + " por BsS" + cost + "\n");
 						board.placeOwnerToken(currentSpace, currentPlayer.getPlayerNum());
-						board.updateInformation(player1.getCash(), player2.getCash());
+						if (player4 != null) board.updateInformation(player1.getCash(), player2.getCash(), player3.getCash(), player4.getCash());
+						else if (player3 != null) board.updateInformation(player1.getCash(), player2.getCash(), player3.getCash(), 0);
+						else board.updateInformation(player1.getCash(), player2.getCash(), 0, 0);
 						if (thisOne == currentPlayer.getPlayerNum()){
 							if (currentSpace == 1) conexion.EnviarMensaje(origen + origen + "0100", "10000000");
 							if (currentSpace == 3) conexion.EnviarMensaje(origen + origen + "0100", "10000001");
@@ -150,24 +207,24 @@ public class Game {
 					}
 					//Otherwise tell them they don't.
 					else
-						board.changeTextArea("You cannot afford this property.\n");
+						board.changeTextArea("No tienes suficiente plata mano.\n");
 				}
 				//Tell them that the property is owned
 				else {
 					if(BoardSpace.getSpaceAttribute(currentSpace, 0) == currentPlayer.getPlayerNum())
-						board.changeTextArea("Property already owned by you\n");
+						board.changeTextArea("La propiedad ya te pertenece\n");
 					else
-						board.changeTextArea("Property already owned by someone else\n");
+						board.changeTextArea("La propiedad ya le pertenece a alguien más\n");
 				}
 			}
 			//Otherwise tell the player that the property is now ownable.
 			else {
-				board.changeTextArea("This space cannot be purchased.\n");
+				board.changeTextArea("Esta casilla no se puede comprar.\n");
 			}
 		}
 		//Otherwise, tell them to roll.
 		else {
-			board.changeTextArea(currentPlayer.getName() + " please roll first\n");
+			board.changeTextArea(currentPlayer.getName() + " tira los dados primero\n");
 		}
 	}
 	
@@ -175,7 +232,7 @@ public class Game {
 		//If the player hasn't already rolled
 		if(!alreadyRolled) {
 			if (currentPlayer.getPlayerNum() == thisOne) roll();
-			board.changeTextArea(currentPlayer.getName() + " rolled a " + (dice1+dice2) + "\n");
+			board.changeTextArea(currentPlayer.getName() + " saco un " + (dice1+dice2) + "\n");
 			int temp = dice1+dice2 + currentPlayer.getSpaceNum();
 			//If the dice total + player space exceeds 39, which
 			//is boardwalk, then the space should be set to a 0, and
@@ -186,7 +243,7 @@ public class Game {
 			}
 			//Set the player space to the new space.
 			currentPlayer.setSpaceNum(temp);
-			board.changeTextArea(currentPlayer.getName() + " landed on " + BoardSpace.getName(temp) + "\n");
+			board.changeTextArea(currentPlayer.getName() + " cayo en " + BoardSpace.getName(temp) + "\n");
 			//Move the player token to the new place.
 			board.moveToken(currentPlayer.getSpaceNum(), currentPlayer.getPlayerNum());
 			alreadyRolled=true;
@@ -211,10 +268,12 @@ public class Game {
 		}
 		//Otherwise tell them they have already rolled.
 		else 
-			board.changeTextArea("You have already rolled\n");
+			board.changeTextArea("Tu ya lanzaste el dado\n");
 		//CREATE A NEW METHOD THAT DEALS WITH EXCEPTIONS. SAME AS THE EVALUATE METHOD HERE, WITHOUT BUY.
 		evaluateBoard();
-		board.updateInformation(player1.getCash(), player2.getCash());
+		if (player4 != null) board.updateInformation(player1.getCash(), player2.getCash(), player3.getCash(), player4.getCash());
+		else if (player3 != null) board.updateInformation(player1.getCash(), player2.getCash(), player3.getCash(), 0);
+		else board.updateInformation(player1.getCash(), player2.getCash(), 0, 0);
 	}
 
 	public static void evaluateBoard() {
@@ -228,8 +287,12 @@ public class Game {
 				if(currentPlayer.getPlayerNum()!=owner && !paidRent) {
 					rent = BoardSpace.getSpaceAttribute(currentPlayer.getSpaceNum(), 2);
 					currentPlayer.changeCash(-rent);
+					if (owner == player1.getPlayerNum()) otherPlayer = player1;
+					if (owner == player2.getPlayerNum()) otherPlayer = player2;
+					if (owner == player3.getPlayerNum()) otherPlayer = player3;
+					if (owner == player4.getPlayerNum()) otherPlayer = player4;
 					otherPlayer.changeCash(rent);
-					board.changeTextArea(currentPlayer.getName() + " just payed " + rent + " to " + otherPlayer.getName() + "\n");
+					board.changeTextArea(currentPlayer.getName() + " le pago de renta " + rent + " a " + otherPlayer.getName() + "\n");
 					paidRent = true;
 				}
 			}
@@ -239,19 +302,19 @@ public class Game {
 				int money = BoardSpace.getSpaceAttribute(currentPlayer.getSpaceNum(), 2);
 				//If the space is either go or free parking, add the money.
 				if(tempSpace == 0 || tempSpace == 20) {
-					board.changeTextArea("You earned " + Math.abs(money) +"\n");
+					board.changeTextArea("El jugador " + currentPlayer.getName() + " ha ganado BsS "+ Math.abs(money) +"\n");
 					currentPlayer.changeCash(money);
 					paidRent = true;
 				}
 				else if(tempSpace == 4 || tempSpace == 38) {
-					board.changeTextArea("You lost " + Math.abs(money) + "\n");
+					board.changeTextArea("El jugador " + currentPlayer.getName() + " ha perdido BsS " + Math.abs(money) + "\n");
 					currentPlayer.changeCash(money);
 					paidRent = true;
 				}
 				else if(tempSpace == 30) {
 					currentPlayer.changeCash(money);
 					board.moveToken(10, currentPlayer.getPlayerNum());
-					board.changeTextArea("You paid " + Math.abs(money) + "\n");
+					board.changeTextArea("El jugador " + currentPlayer.getName() + " ha pagado BsS " + Math.abs(money) + "\n");
 					paidRent = true;
 				}
 			}
@@ -268,13 +331,13 @@ public class Game {
 			}
 		}
 		if(!properties.isEmpty()) {
-			board.changeTextArea("Your Properties are: \n");
+			board.changeTextArea("Las propiedades que posees son: \n");
 			for(String c:properties) {
 				board.changeTextArea("   " + c + "\n");
 			} 
 		}
 		else
-			board.changeTextArea("You don't own any properties\n");
+			board.changeTextArea("No posees ninguna propiedad\n");
 	}
 
 	/*public static void ListenForAction(){
@@ -331,8 +394,9 @@ public class Game {
 				byte[] recibo = new byte[4];
 				String primerOcteto;
 				String segundoOcteto;
-				board.changeTextArea("The turn does not currently belong to you\n");
-				while(thisOne!=currentPlayer.getPlayerNum()){
+				board.changeTextArea("No es tu turno aun\n");
+				//while(thisOne!=currentPlayer.getPlayerNum()){
+				while (true){
 					recibo = conexion.RecibirMensaje();
 					primerOcteto = ConexionSerial.pasarByteAString(recibo[1]);
 					segundoOcteto = ConexionSerial.pasarByteAString(recibo[2]);
