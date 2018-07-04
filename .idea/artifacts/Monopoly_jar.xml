@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Monopoly:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Monopoly_jar</output-path>
+    <root id="archive" name="Monopoly.jar">
+      <element id="module-output" name="Monopoly" />
+      <element id="extracted-dir" path="C:/Program Files (x86)/Java/jre1.8.0_131/lib/jSerialComm-2.0.2.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/resources" />
+    </root>
+  </artifact>
+</component>

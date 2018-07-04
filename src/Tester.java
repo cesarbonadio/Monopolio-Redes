@@ -1,5 +1,9 @@
 import javax.swing.JOptionPane;
 import com.fazecast.jSerialComm.*;
+
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,6 +19,25 @@ public class Tester {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		//String path = Paths.get("").toAbsolutePath().toString();
+		String cadena ="";
+        File cwdFile = new File (".");
+		String path = System.getProperty("user.dir");
+		int y = 0;
+		int x = path.length();
+		for (y = 0; y < x; y++){
+		    if (!path.substring(y, y+1).equals(".")){
+                if (!path.substring(y,y+1).equals("\\")){
+                    cadena = cadena.concat(path.substring(y,y+1));
+                }
+                else{
+                    cadena = cadena.concat("/");
+                }
+            }
+
+		}
+		System.out.println(cadena);
+		JOptionPane.showMessageDialog(null, cadena);
 
 		ArrayList<String> puertos = ConexionSerial.listaPuertos();
 		int i=0;
@@ -34,7 +57,7 @@ public class Tester {
 		ConexionSerial conexion = new ConexionSerial();
 		conexion.setPuertos(entrada, salida);
 		String player = JOptionPane.showInputDialog("Es el jugador uno? Si o No?");
-		if (player.equals("Si")){
+		if (player.equals("Si") || player.equals("si") ){
 			conexion.EnviarMensaje("00000000", "10000000");
 			recibo = conexion.RecibirMensaje();
 			/*System.out.print("Se encontro el mensaje:\n");
@@ -98,17 +121,17 @@ public class Tester {
 			Player p3 = new Player(STARTING_MONEY, p3Name);
 			String p4Name = JOptionPane.showInputDialog("Ingrese el nombre del cuarto jugador");
 			Player p4 = new Player(STARTING_MONEY, p4Name);
-			MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, p4Name, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
+			MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, p4Name, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8),cadena);
 			Game myGame = new Game(gameBoard, p1, p2, p3, p4, current, conexion);
 		}
 		else if (ConexionSerial.pasarByteAString(recibo[2]).substring(6,8).equals("10")) {
 				String p3Name = JOptionPane.showInputDialog("Ingrese el nombre del tercer jugador");
 				Player p3 = new Player(STARTING_MONEY, p3Name);
-				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, null, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
+				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, p3Name, null, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8),cadena);
 			Game myGame = new Game(gameBoard, p1, p2, p3, null, current, conexion);
 		}
 		else{
-				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, null, null, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8));
+				MonopolyBoard gameBoard = new MonopolyBoard(p1Name, p2Name, null, null, conexion, "100001"+ConexionSerial.pasarByteAString(recibo[2]).substring(6,8),cadena);
 				Game myGame = new Game(gameBoard, p1, p2, null, null, current, conexion);
 			}
 

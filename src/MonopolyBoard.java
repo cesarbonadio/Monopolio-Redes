@@ -1,9 +1,12 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+
 /**
  * This class will create the Monopoly Board. It is the essential GUI
  * 
@@ -48,14 +51,16 @@ public class MonopolyBoard extends JFrame{
 	private ArrayList<JLabel> greenLabels;
 	private ArrayList<OwnerToken> yellowTokens;
 	private ArrayList<JLabel> yellowLabels;
+	private String jarPath;
 	
 	
-	public MonopolyBoard(String p1Name, String p2Name, String p3Name, String p4Name, ConexionSerial conexion, String tramaInicializar){
+	public MonopolyBoard(String p1Name, String p2Name, String p3Name, String p4Name, ConexionSerial conexion, String tramaInicializar, String path){
 		
 		this.p1Name = p1Name;
 		this.p2Name = p2Name;
 		this.p3Name = p3Name;
 		this.p4Name = p4Name;
+		this.jarPath = path;
 		
 		//Instantiates the components
 		instantiate();
@@ -188,7 +193,8 @@ public class MonopolyBoard extends JFrame{
 	 *Instantiates all of the buttons and shit. 
 	 */
 	private void instantiate() {
-		boardPanel = new BoardPanel("MonopolyBoard.gif");
+		//boardPanel = new BoardPanel("assets/MonopolyBoard.gif");
+		boardPanel = new BoardPanel(jarPath +"/resources/MonopolioGili.png");
 		topPanel = new JPanel(new FlowLayout());
 		bottomPanel = new JPanel(new FlowLayout());
 		lp = getLayeredPane();
@@ -219,13 +225,13 @@ public class MonopolyBoard extends JFrame{
 	 */
 	private void createDice() {
 		dice = new String[7];
-		dice[0] = "d0.gif";
-		dice[1] = "d1.gif";
-		dice[2] = "d2.gif";
-		dice[3] = "d3.gif";
-		dice[4] = "d4.gif";
-		dice[5] = "d5.gif";
-		dice[6] = "d6.gif";
+		dice[0] = jarPath +"/resources/d0.gif";
+		dice[1] = jarPath +"/resources/d1.gif";
+		dice[2] = jarPath +"/resources/d2.gif";
+		dice[3] = jarPath +"/resources/d3.gif";
+		dice[4] = jarPath +"/resources/d4.gif";
+		dice[5] = jarPath +"/resources/d5.gif";
+		dice[6] = jarPath +"/resources/d6.gif";
 	}
 
 	public void changeDice(int d1, int d2) {
@@ -270,7 +276,7 @@ public class MonopolyBoard extends JFrame{
 
 	public void placeOwnerToken(int space, int player) {
 		if(player == 1) {
-			OwnerToken tempRed = new OwnerToken("Rhouse.png",space);
+			OwnerToken tempRed = new OwnerToken(jarPath +"/resources/Rhouse.png",space);
 			redTokens.add(tempRed);
 			JLabel tempRedLabel = new JLabel(tempRed);
 			redLabels.add(tempRedLabel);
@@ -278,7 +284,7 @@ public class MonopolyBoard extends JFrame{
 			tempRedLabel.setBounds(0, 0, 800, 800);
 		}
 		else if (player == 2){
-			OwnerToken tempBlue = new OwnerToken("Bhouse.png",space);
+			OwnerToken tempBlue = new OwnerToken(jarPath +"/resources/Bhouse.png",space);
 			blueTokens.add(tempBlue);
 			JLabel tempBlueLabel = new JLabel(tempBlue);
 			blueLabels.add(tempBlueLabel);
@@ -286,7 +292,7 @@ public class MonopolyBoard extends JFrame{
 			tempBlueLabel.setBounds(0, 0, 800, 800);
 		}
 		else if (player == 3){
-			OwnerToken tempGreen = new OwnerToken("Ghouse.png",space);
+			OwnerToken tempGreen = new OwnerToken(jarPath +"/resources/Ghouse.png",space);
 			greenTokens.add(tempGreen);
 			JLabel tempGreenLabel = new JLabel(tempGreen);
 			greenLabels.add(tempGreenLabel);
@@ -294,7 +300,7 @@ public class MonopolyBoard extends JFrame{
 			tempGreenLabel.setBounds(0, 0, 800, 800);
 		}
 		else{
-			OwnerToken tempYellow = new OwnerToken("Yhouse.png",space);
+			OwnerToken tempYellow = new OwnerToken(jarPath +"/resources/Yhouse.png",space);
 			yellowTokens.add(tempYellow);
 			JLabel tempYellowLabel = new JLabel(tempYellow);
 			yellowLabels.add(tempYellowLabel);
