@@ -1,10 +1,3 @@
-# ComunicacionSerial
+# Monopolio
 
-
-links : 
-
-https://www.youtube.com/watch?v=UAXWoMAiVAk&t
-https://www.youtube.com/watch?v=qETVv5g5H9o&t
-
-
-
+ Juego de monopolio que funciona en comunicación serial
